@@ -163,7 +163,7 @@ nq_dataset = create_qa_dataset(
 )
 
 # 示例数据（用于测试）
-sample_dataset = create_sample_qa_dataset(tokenizer, num_samples=100)
+sample_dataset = create_sample_qa_dataset(tokenizer, num_samples=10)
 ```
 
 ## 🏋️ 训练配置
@@ -187,17 +187,8 @@ training_args = create_training_arguments(
 trainer = train_model(model, tokenizer, dataset, training_args=training_args)
 ```
 
-## 📈 性能对比
 
-| 技术 | 训练速度 | 收敛速度 | 显存使用 | 性能 | 适用场景 |
-|------|----------|----------|----------|------|----------|
-| LoRA | ⭐⭐⭐⭐ | ⭐⭐⭐ | 100% | ⭐⭐⭐ | 通用，稳定 |
-| DoRA | ⭐⭐⭐ | ⭐⭐⭐⭐ | 100% | ⭐⭐⭐⭐ | 性能优先 |
-| QLoRA | ⭐⭐⭐ | ⭐⭐⭐ | 35% | ⭐⭐⭐ | 显存受限 |
-| PiSSA | ⭐⭐ | ⭐⭐⭐⭐⭐ | 100% | ⭐⭐⭐⭐⭐ | 最佳效果 |
-| AdaLoRA | ⭐⭐ | ⭐⭐⭐⭐ | 100% | ⭐⭐⭐⭐ | 参数效率 |
-
-## 💡 选择建议
+## 💡 选择建议 （待定)
 
 - **快速实验**: LoRA
 - **性能优先**: DoRA 或 PiSSA
@@ -237,22 +228,6 @@ response = generate_text(
 print(response)
 ```
 
-### 混合使用
-```python
-# PiSSA + QLoRA 组合（推荐）
-bnb_config = create_bnb_config()  # 4bit量化
-pissa_config = create_pissa_config(
-    init_lora_weights="pissa_niter_4"
-)
-
-# 注意：需要先量化再应用PiSSA
-model = AutoModelForCausalLM.from_pretrained(
-    "model_name", 
-    quantization_config=bnb_config
-)
-model = prepare_model_for_kbit_training(model)
-model = get_peft_model(model, pissa_config)
-```
 
 ## 📋 依赖要求
 
@@ -265,28 +240,6 @@ model = get_peft_model(model, pissa_config)
 
 详见 `requirements.txt`
 
-## 🐛 常见问题
-
-### Q: PEFT版本兼容性？
-A: 建议使用PEFT 0.8+，支持所有技术的最新特性。
-
-### Q: 显存不够怎么办？
-A: 使用QLoRA或减小batch_size、增加gradient_accumulation_steps。
-
-### Q: 如何选择rank？
-A: 一般建议：7B模型用64-128，13B+模型用128-256。
-
-### Q: AdaLoRA为什么复杂？
-A: AdaLoRA需要特殊的训练循环和RankAllocator，见`AdaLoRA/adalora.py`。
-
-## 📄 许可证
-
-本项目采用MIT许可证。各技术的原始实现遵循其各自的许可证：
-- LoRA: Microsoft (MIT)
-- DoRA: HuggingFace PEFT (Apache 2.0)
-- QLoRA: HuggingFace PEFT (Apache 2.0)
-- PiSSA: HuggingFace PEFT (Apache 2.0)  
-- AdaLoRA: Microsoft (MIT)
 
 ## 🤝 贡献
 
