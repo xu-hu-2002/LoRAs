@@ -22,7 +22,7 @@ from AdaLoRA.adalora_config import AdaLoRAConfig
 
 # 导入共享工具
 from common.data_preprocessing import create_qa_dataset, create_sample_qa_dataset
-from common.training_utils import create_training_arguments, train_model, save_model_and_adapter
+from common.training_utils import create_training_arguments, train_model, save_model_and_adapter, merge_and_save_model, load_merged_model, compare_model_sizes, validate_merged_model
 
 def demo_lora():
     """演示LoRA使用"""
@@ -153,12 +153,9 @@ def demo_adalora():
     print(f"  目标Rank: {adalora_config.target_rank}")
     print(f"  Alpha: {adalora_config.lora_alpha}")
     print(f"  预热步数: {adalora_config.init_warmup} - {adalora_config.final_warmup}")
-    
-    print("\n注意: AdaLoRA需要特殊的训练循环和RankAllocator")
-    print("请参考AdaLoRA/adalora.py中的完整实现")
+
 
 def demo_data_preprocessing():
-    """演示数据预处理"""
     print("="*60)
     print("数据预处理演示")
     print("="*60)
@@ -246,31 +243,17 @@ def compare_techniques():
        - 适用: 参数预算有限且要求最优分配
        - 显存: 基础模型大小
     
-    选择建议:
-    - 快速实验: LoRA
-    - 性能优先: DoRA或PiSSA
-    - 显存受限: QLoRA
-    - 参数效率: AdaLoRA
-    - 最佳实践: PiSSA + QLoRA组合
     """
     
     print(comparison)
+    
 
 def main():
-    """主函数"""
-    print("🚀 参数高效微调技术演示")
-    print("基于HuggingFace PEFT库的统一实现")
-    print("="*60)
+    """主演示函数"""
+    print("🌟 PEFT技术统一实现演示")
+    print("本演示展示5种主流参数高效微调技术的使用方法")
+    print()
     
-    # 检查PEFT版本
-    try:
-        import peft
-        print(f"PEFT版本: {peft.__version__}")
-    except ImportError:
-        print("⚠️ PEFT库未安装，请运行: pip install peft")
-        return
-    
-    # 演示各种技术
     demo_lora()
     print()
     
@@ -296,7 +279,7 @@ def main():
     
     print("="*60)
     print("演示完成！")
-    print("\n实际使用步骤:")
+    print("\n完整使用流程:")
     print("1. 安装依赖: pip install -r requirements.txt")
     print("2. 选择技术: LoRA/DoRA/QLoRA/PiSSA/AdaLoRA")
     print("3. 配置参数: create_xxx_config(...)")
