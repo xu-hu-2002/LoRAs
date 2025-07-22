@@ -1,3 +1,4 @@
+# GPU环境安装
 # LoRA代码集合的依赖要求 - HuggingFace PEFT版本
 # Python 3.8+
 

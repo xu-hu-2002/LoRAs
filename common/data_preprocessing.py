@@ -7,6 +7,7 @@ from transformers import AutoTokenizer
 from typing import Dict, List, Optional, Union
 import json
 import os
+from config import get_model, MODELS
 
 def load_triviaqa_dataset(split: str = "train", subset: str = "rc.nocontext", max_samples: Optional[int] = None):
     """
@@ -278,6 +279,52 @@ def load_saved_dataset(load_path: str) -> Dataset:
     dataset = Dataset.load_from_disk(load_path)
     print(f"数据集已从 {load_path} 加载，样本数: {len(dataset)}")
     return dataset
+
+def load_and_preprocess_data(dataset_name="trivia_qa", model_name=None, max_samples=None, split="train"):
+    """
+    加载并预处理数据集。
+    
+    Args:
+        dataset_name (str): 要加载的数据集名称 ("trivia_qa" 或 "nq_open")。
+        model_name (str, optional): 用于tokenizer的模型名称。如果为None，则从配置中获取默认模型。
+        max_samples (int, optional): 要加载的最大样本数，用于测试。
+        split (str): 要加载的数据集部分 (例如 "train", "validation")。
+    
+    Returns:
+        Dataset: 预处理后的数据集。
+    """
+    print(f"正在加载数据集 '{dataset_name}' 的 '{split}' 部分...")
+    if dataset_name == "trivia_qa":
+        # 使用 trivia_qa 的 rc.nocontext 配置
+        dataset = load_dataset("trivia_qa", "rc.nocontext", split=split)
+    elif dataset_name == "nq_open":
+        dataset = load_dataset("nq_open", split=split)
+    else:
+        raise ValueError("不支持的数据集。请选择 'trivia_qa' 或 'nq_open'。")
+
+    if max_samples:
+        print(f"数据量缩减至 {max_samples} 个样本用于测试。")
+        dataset = dataset.select(range(max_samples))
+
+    print("正在加载Tokenizer...")
+    # 获取模型名称，如果没有提供，则使用默认模型
+    if model_name is None:
+        model_name = get_model(dataset_name)
+    
+    # 加载tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    
+    # 预处理数据
+    processed_dataset = dataset.map(
+        lambda examples: preprocess_triviaqa(examples, tokenizer, max_length=512), # 使用预定义的max_length
+        batched=True,
+        remove_columns=dataset.column_names
+    )
+    
+    print(f"数据集 '{dataset_name}' 的 '{split}' 部分预处理完成，样本数: {len(processed_dataset)}")
+    return processed_dataset
 
 # 使用示例
 if __name__ == "__main__":

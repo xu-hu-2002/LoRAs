@@ -3,8 +3,7 @@
 
 import torch
 from peft import LoraConfig, get_peft_model, PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, Trainer
-from datasets import Dataset
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
 import sys
 sys.path.append('..')

@@ -12,6 +12,7 @@ MODELS = {
 }
 
 # 基础PEFT配置
+# peft config是用于lora qlora dora pissa的；ada lora没有集成，有自己的配置
 PEFT_CONFIG = {
     "small": {"r": 32, "alpha": 64},         # 1B模型推荐
     "medium": {"r": 128, "alpha": 256},       # 3B模型推荐 ⭐
