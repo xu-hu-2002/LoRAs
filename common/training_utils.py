@@ -228,7 +228,7 @@ def merge_and_save_model(
     tokenizer,
     save_dir: str,
     save_merged_model: bool = True,
-    save_adapter_separately: bool = False
+    save_adapter_separately: bool = True
 ):
     """
     合并adapter权重到base model并保存完整模型
