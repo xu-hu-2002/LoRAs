@@ -1,4 +1,4 @@
-# 参数高效微调技术集合 (PEFT Collection)
+# PEFT Collection
 
 基于HuggingFace PEFT库的五种主流参数高效微调技术统一实现，专为TriviaQA和NQ Open数据集训练优化。
 
