@@ -23,7 +23,6 @@ def load_triviaqa_dataset(split: str = "train", subset: str = "rc.nocontext", ma
     """
     print(f"加载TriviaQA数据集 - split: {split}, subset: {subset}")
     
-    # 加载数据集
     dataset = load_dataset("trivia_qa", subset)[split]
     
     if max_samples:
@@ -44,8 +43,6 @@ def load_natural_questions_dataset(split: str = "train", max_samples: Optional[i
         Dataset: 处理后的数据集
     """
     print(f"加载Natural Questions数据集 - split: {split}")
-    
-    # 加载数据集
     dataset = load_dataset("natural_questions")[split]
     
     if max_samples:
@@ -91,17 +88,17 @@ def preprocess_triviaqa(examples, tokenizer, max_length: int = 512):
         text = f"Question: {q}\nAnswer: {a}"
         texts.append(text)
     
-    # tokenize
+    # tokenize - 移除return_tensors参数，让DataCollator处理张量转换
     tokenized = tokenizer(
         texts,
         truncation=True,
-        padding=True,
+        padding=False,  # 改为False，让DataCollator处理padding
         max_length=max_length,
-        return_tensors="pt"
+        # 移除return_tensors="pt"
     )
     
-    # 设置labels为input_ids的副本（用于language modeling）
-    tokenized["labels"] = tokenized["input_ids"].clone()
+    # 设置labels为input_ids的副本（不使用.clone()）
+    tokenized["labels"] = tokenized["input_ids"].copy()
     
     return tokenized
 
