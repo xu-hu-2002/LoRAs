@@ -13,7 +13,7 @@ def load_triviaqa_dataset(split: str = "train", subset: str = "rc.nocontext", ma
     Args:
         split:  ("train", "validation", "test")
         subset: ("rc.nocontext", "rc", "unfiltered")
-        max_samples: 最大样本数，None表示加载全部
+        max_samples: max_sample，None表示加载全部
     
     Returns:
         Dataset
@@ -33,11 +33,11 @@ def load_natural_questions_dataset(split: str = "train", max_samples: Optional[i
     加载Natural Questions数据集
     
     Args:
-        split: 数据集分割 ("train", "validation")
+        split:  ("train", "validation")
         max_samples: 最大样本数，None表示加载全部
     
     Returns:
-        Dataset: 处理后的数据集
+        Dataset: 处理后的
     """
     print(f"加载Natural Questions数据集 - split: {split}")
     dataset = load_dataset("natural_questions")[split]
@@ -50,12 +50,12 @@ def load_natural_questions_dataset(split: str = "train", max_samples: Optional[i
 
 def preprocess_triviaqa(examples, tokenizer, max_length: int = 512):
     """
-    preprocess TriviaQA数据
+    preprocess TriviaQA
     
     Args:
         examples: 批量数据
         tokenizer: tokenizer
-        max_length: 最大序列长度
+        max_length: max sequence 
     
     Returns:
         Dict: 处理后的数据
@@ -73,10 +73,9 @@ def preprocess_triviaqa(examples, tokenizer, max_length: int = 512):
     else:
         answer_texts = [""] * len(questions)
     
-    # 格式化为问答格式
+    # change to the QA format
     texts = []
     for q, a in zip(questions, answer_texts):
-        # 确保答案是字符串
         if isinstance(a, list) and len(a) > 0:
             a = a[0]  # 取第一个答案
         elif not isinstance(a, str):
@@ -179,7 +178,7 @@ def create_qa_dataset(
         # 加载TriviaQA
         raw_dataset = load_triviaqa_dataset(split=split, max_samples=max_samples)
         
-        # 预处理
+        # preprocess
         processed_dataset = raw_dataset.map(
             lambda examples: preprocess_triviaqa(examples, tokenizer, max_length),
             batched=True,
@@ -187,10 +186,10 @@ def create_qa_dataset(
         )
         
     elif dataset_name.lower() == "natural_questions":
-        # 加载Natural Questions
+        # load Natural Questions
         raw_dataset = load_natural_questions_dataset(split=split, max_samples=max_samples)
         
-        # 预处理
+        # preprocess
         processed_dataset = raw_dataset.map(
             lambda examples: preprocess_natural_questions(examples, tokenizer, max_length),
             batched=True,
