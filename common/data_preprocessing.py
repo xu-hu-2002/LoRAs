@@ -1,5 +1,3 @@
-# 共享数据预处理函数
-# 支持TriviaQA和NQ Open数据集的预处理
 
 import torch
 from datasets import load_dataset, Dataset
@@ -11,19 +9,17 @@ from config import get_model, MODELS
 
 def load_triviaqa_dataset(split: str = "train", subset: str = "rc.nocontext", max_samples: Optional[int] = None):
     """
-    加载TriviaQA数据集 rc子集
     
     Args:
-        split: 数据集分割 ("train", "validation", "test")
-        subset: 子集选择 ("rc.nocontext", "rc", "unfiltered")
+        split:  ("train", "validation", "test")
+        subset: ("rc.nocontext", "rc", "unfiltered")
         max_samples: 最大样本数，None表示加载全部
     
     Returns:
-        Dataset: 处理后的数据集
+        Dataset
     """
-    print(f"加载TriviaQA数据集 - split: {split}, subset: {subset}")
+    print(f"load TriviaQA dataset - split: {split}, subset: {subset}")
     
-    # 加载数据集
     dataset = load_dataset("trivia_qa", subset)[split]
     
     if max_samples:
@@ -44,8 +40,6 @@ def load_natural_questions_dataset(split: str = "train", max_samples: Optional[i
         Dataset: 处理后的数据集
     """
     print(f"加载Natural Questions数据集 - split: {split}")
-    
-    # 加载数据集
     dataset = load_dataset("natural_questions")[split]
     
     if max_samples:
@@ -56,7 +50,7 @@ def load_natural_questions_dataset(split: str = "train", max_samples: Optional[i
 
 def preprocess_triviaqa(examples, tokenizer, max_length: int = 512):
     """
-    预处理TriviaQA数据
+    preprocess TriviaQA数据
     
     Args:
         examples: 批量数据
@@ -91,17 +85,17 @@ def preprocess_triviaqa(examples, tokenizer, max_length: int = 512):
         text = f"Question: {q}\nAnswer: {a}"
         texts.append(text)
     
-    # tokenize
+    # tokenize - 移除return_tensors参数，让DataCollator处理张量转换
     tokenized = tokenizer(
         texts,
         truncation=True,
-        padding=True,
+        padding=False,  # 改为False，让DataCollator处理padding
         max_length=max_length,
-        return_tensors="pt"
+        # 移除return_tensors="pt"
     )
     
-    # 设置labels为input_ids的副本（用于language modeling）
-    tokenized["labels"] = tokenized["input_ids"].clone()
+    # 设置labels为input_ids的副本（不使用.clone()）
+    tokenized["labels"] = tokenized["input_ids"].copy()
     
     return tokenized
 
