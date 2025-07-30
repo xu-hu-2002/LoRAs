@@ -2,13 +2,13 @@
 # 简洁版本，包含最常用的配置
 
 # 推荐模型 (按性能和资源需求排序)
-DEFAULT_MODEL = "meta-llama/Llama-3.2-3B"  # 默认推荐模型
+DEFAULT_MODEL = "meta-llama/Llama-3.2-3B-Instruct"  # 默认推荐模型
 
 MODELS = {
-    "small": "meta-llama/Llama-3.2-1B",     # 1.24B参数，适合快速测试
-    "medium": "meta-llama/Llama-3.2-3B",    # 3.21B参数，性价比最高 ⭐推荐⭐
-    "large": "meta-llama/Llama-3.1-8B",     # 8.03B参数，高性能
-    "xl": "meta-llama/Llama-3.1-70B",       # 70.6B参数，最佳性能
+    "small": "meta-llama/Llama-3.2-1B-Instruct",     # 1.24B参数，适合快速测试
+    "medium": "meta-llama/Llama-3.2-3B-Instruct",    # 3.21B参数，性价比最高 ⭐推荐⭐
+    "large": "meta-llama/Llama-3.1-8B-Instruct",     # 8.03B参数，高性能
+    "xl": "meta-llama/Llama-3.1-70B-Instruct",       # 70.6B参数，最佳性能
 }
 
 # 基础PEFT配置
